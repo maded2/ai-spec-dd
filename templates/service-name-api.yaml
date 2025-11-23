@@ -1,0 +1,191 @@
+openapi: 3.0.3
+info:
+  title: Transaction Service API
+  description: |
+    API for managing financial transactions.
+    
+    **Jira Epic:** [PROJ-123 - Transaction Management](https://jira.example.com/browse/PROJ-123)
+    **ADR:** [ADR-045 - Event-Driven Transaction Processing](../adr/adr-045-event-driven-transactions.md)
+    
+    **AI-Assisted Design:**
+    - Generated from functional spec using AI agent
+    - Reviewed and approved by architecture team on 2025-01-15
+  version: 1.0.0
+  contact:
+    name: Platform Team
+    email: platform@example.com
+
+servers:
+  - url: https://api.example.com/v1
+    description: Production
+  - url: https://api-staging.example.com/v1
+    description: Staging
+  - url: http://localhost:8080/v1
+    description: Local development
+
+tags:
+  - name: transactions
+    description: Transaction operations
+
+paths:
+  /transactions:
+    post:
+      summary: Create a new transaction
+      description: |
+        Creates a new financial transaction.
+        
+        **Jira Story:** [PROJ-124](https://jira.example.com/browse/PROJ-124)
+        
+        **Business Rules:**
+        - Amount must be > 0
+        - User must be authenticated
+        - Daily transaction limit applies
+        
+        **Security:**
+        - Requires OAuth2 token with scope `transactions:write`
+        - Rate limited to 100 requests/minute per user
+      operationId: createTransaction
+      tags:
+        - transactions
+      security:
+        - oauth2: [transactions:write]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransactionRequest'
+            examples:
+              valid:
+                summary: Valid transaction
+                value:
+                  amount: 100.50
+                  currency: USD
+                  description: "Payment for invoice #12345"
+                  recipientId: "user-456"
+      responses:
+        '201':
+          description: Transaction created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                invalidAmount:
+                  summary: Invalid amount
+                  value:
+                    code: "INVALID_AMOUNT"
+                    message: "Amount must be greater than 0"
+                    timestamp: "2025-01-15T10:30:00Z"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    CreateTransactionRequest:
+      type: object
+      required:
+        - amount
+        - currency
+        - recipientId
+      properties:
+        amount:
+          type: number
+          format: double
+          minimum: 0.01
+          description: Transaction amount (must be > 0)
+          example: 100.50
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          description: ISO 4217 currency code
+          example: USD
+        description:
+          type: string
+          maxLength: 500
+          description: Optional transaction description
+          example: "Payment for invoice #12345"
+        recipientId:
+          type: string
+          description: ID of the recipient user
+          example: "user-456"
+    
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique transaction ID
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        amount:
+          type: number
+          format: double
+          example: 100.50
+        currency:
+          type: string
+          example: USD
+        status:
+          type: string
+          enum: [pending, completed, failed, cancelled]
+          example: pending
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+    
+    Error:
+      type: object
+      required:
+        - code
+        - message
+        - timestamp
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code
+          example: "INVALID_AMOUNT"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Amount must be greater than 0"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+        details:
+          type: object
+          description: Optional additional error details
+          additionalProperties: true
+
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://auth.example.com/oauth/authorize
+          tokenUrl: https://auth.example.com/oauth/token
+          scopes:
+            transactions:read: Read transaction data
+            transactions:write: Create and modify transactions
+

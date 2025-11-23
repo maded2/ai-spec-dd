@@ -1,0 +1,17 @@
+create an automated trading bot for crypto.
+The trading bot tracks price trend and volatility using streaming market data from coincall exchange (https://docs.coincall.com/#coincall-api-v2-0-1)
+and make decisions to buy or sell based on the trend and volatility.
+The trading bot trade using long and short using future contracts.
+The trading bot support trading multiple symbols, each with its own trading parameters and api keys
+For risk control, each symbol have an independent control and an overall control
+
+The trading bot will use the following strategy:
+1. mean reversion
+2. short and long term volatility
+
+
+The trading bot will use the following risk management
+
+all order sent and order execution along with any fees is stored in the database
+the current position is also stored in the database
+create backtest framework to test the trading bot

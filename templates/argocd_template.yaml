@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: transaction-service-prod
+  namespace: argocd
+  labels:
+    team: platform
+    jira-epic: PROJ-123
+  annotations:
+    jira-epic-url: "https://jira.example.com/browse/PROJ-123"
+    architecture-doc: "https://gitlab.example.com/platform/transaction-service/-/blob/main/docs/adr/adr-045-event-driven-transactions.md"
+spec:
+  project: banking
+  source:
+    repoURL: https://gitlab.example.com/infra/argocd-manifests.git
+    targetRevision: main
+    path: apps/transaction-service/overlays/production
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: banking-prod
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+    - CreateNamespace=false
+    - PrunePropagationPolicy=foreground
+    - PruneLast=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  revisionHistoryLimit: 10
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas  # Allow HPA to manage replicas
