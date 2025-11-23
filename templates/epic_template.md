@@ -1,9 +1,9 @@
 # Epic: [Short Epic Title]
 
 **Epic Key:** [PROJ-XXX]  
-**Business Owner:** [Name]  
-**Technical Lead:** [Name]  
-**Target Quarter:** [Q1 2025]
+**Business Owner:** [Business Owner Name]  
+**Technical Lead:** [Technical Lead Name]  
+**Creation Date:** [today's date]
 
 ---
 
