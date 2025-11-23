@@ -1,17 +1,108 @@
-create an automated trading bot for crypto.
-The trading bot tracks price trend and volatility using streaming market data from coincall exchange (https://docs.coincall.com/#coincall-api-v2-0-1)
-and make decisions to buy or sell based on the trend and volatility.
-The trading bot trade using long and short using future contracts.
-The trading bot support trading multiple symbols, each with its own trading parameters and api keys
-For risk control, each symbol have an independent control and an overall control
+business owner: Eddie Chan
+technical owner: Eddie Chan
 
-The trading bot will use the following strategy:
-1. mean reversion
-2. short and long term volatility
+# Automated Trading Bot for Crypto - High-Level Requirements
 
+## Executive Summary
+Create an automated trading bot for cryptocurrency that operates on the Coincall exchange using WebSocket API for real-time market data. The bot will use mean reversion and volatility-based strategies to make trading decisions for both long and short positions with perpetual futures contracts.
 
-The trading bot will use the following risk management
+## Core Functionality
 
-all order sent and order execution along with any fees is stored in the database
-the current position is also stored in the database
-create backtest framework to test the trading bot
+### 1. Market Data Integration
+- Connect to Coincall WebSocket API v2.0 for real-time market data
+- Subscribe to multiple symbols simultaneously (minimum 10 symbols)
+- Process market data with minimal latency at minute-level frequency
+- Validate incoming data and handle errors gracefully
+- Integrate with internal data storage system (SQLite)
+- Implement automatic connection recovery and resilience
+
+### 2. Trading Strategies
+- Mean reversion strategy implementation:
+  * Calculate price deviations from historical averages
+  * Identify overbought and oversold conditions
+  * Generate trading signals based on configurable thresholds
+- Volatility-based strategy implementation:
+  * Calculate short-term volatility (minutes to hours) and long-term volatility (hours to days)
+  * Adapt trading behavior based on different time horizons
+  * Adjust position sizing based on volatility levels
+- Dynamic strategy switching:
+  * Automatically switch between strategies based on market conditions
+  * Support pluggable strategy modules for easy extension
+  * Track and compare performance of different strategies
+
+### 3. Order Management
+- Execute orders for both long and short positions with perpetual futures contracts
+- Support multiple order types (market and limit orders)
+- Handle order tracking and fill management:
+  * Track all placed orders with status updates
+  * Record trade fills with execution price and quantity
+  * Update position tracking based on executed trades
+- Multi-symbol trading with individual configuration per symbol
+
+### 4. Risk Management
+- Individual symbol risk controls (position size, daily loss limits) with thresholds stored in config file
+- Overall portfolio risk controls (total exposure, drawdown limits) with thresholds stored in config file
+- Position sizing based on risk parameters
+- Stop-loss and take-profit order management with trailing functionality
+
+### 5. Data Persistence
+- Store all orders sent, order execution details, fills, positions, and PnL in an SQLite database
+- Store minute-level market data aggregated as OHLCV (Open, High, Low, Close, Volume)
+- Implement efficient historical data management with configurable retention policies
+- Support data backup and integrity measures
+
+### 6. Backtesting Framework
+- Integrate with at least 1 year of historical Coincall data
+- Provide accelerated replay capabilities (10x, 100x real-time) for quick testing
+- Support sequential replay of one symbol at a time for focused testing
+- Calculate and track performance metrics during backtesting
+
+### 7. Monitoring & Alerting
+- Real-time console logging of all system operations
+- Monitor trading metrics every minute including position sizes, PnL, trade counts, and exposure
+- Generate alert messages in log files for exceptional conditions
+- Alert system for risk threshold breaches, connection issues, and errors
+
+## Technical Specifications
+
+### Platform & Infrastructure
+- Implementation language: Golang
+- Exchange: Coincall only (no multi-exchange support planned)
+- Database: SQLite for data persistence
+- Deployment: On-premises infrastructure
+- Operating schedule: 24/7 with 99.9% uptime requirement
+
+### Data Handling
+- Market data tracking frequency: Minute-level (not millisecond)
+- Raw tick data: Not stored (aggregate to minute-level only)
+- Data retention: Configurable based on storage requirements
+- API credentials: Stored securely in config file
+
+### Security & Compliance
+- API credentials encrypted at rest in configuration files
+- No specific compliance requirements for this trading bot (non-regulated environment)
+- Secure WebSocket connections to exchange API
+
+## Configuration & Management
+- Trading parameters configurable per symbol in external config file
+- Risk thresholds configurable per symbol and portfolio-wide
+- Connection parameters (API URLs, heartbeat settings) configurable
+- Strategy parameters configurable per symbol
+- Support for dynamic configuration updates without restart when possible
+
+## Performance Requirements
+- WebSocket connection with minimal latency (< 100ms for data processing)
+- Support for 10+ symbols simultaneously without performance degradation
+- 24/7 operation with 99.9% uptime requirement
+- Efficient database operations that don't impact trading performance
+- Accelerated backtesting that completes significantly faster than real-time
+
+## Success Criteria
+The trading bot will be considered successful when:
+- It can reliably connect to Coincall WebSocket API and receive market data
+- It can execute trading strategies across multiple symbols simultaneously
+- It implements proper risk controls to prevent excessive losses
+- It maintains accurate records of all trading activity in the database
+- The backtesting framework allows for effective strategy validation
+- It provides adequate monitoring and alerting for operational awareness
+- It operates 24/7 with minimal downtime and maintenance
