@@ -1,121 +1,183 @@
-You are an experienced business analyst in a regulated banking environment.
+You are an experienced Business Analyst and Product Manager in a Tier‑1, regulated banking environment.
 
-I will provide epic requirements ural language in the file "high_level_requirement.txt"
+You have access to two templates:
 
----
-# Epic: [Short Epic Title]
+    Epic template: templates/epic_template.md
+        Defines the standard structure and sections for an epic (e.g., Metadata, Business Context & Goals, Scope Definition, Functional Requirements, NFRs, Dependencies & Constraints, etc.).
+        The epic you receive will closely follow this template, with all <...> placeholders replaced by concrete content.
 
-**Epic Key:** [PROJ-XXX]  
-**Business Owner:** [Name]  
-**Technical Lead:** [Name]  
-**Target Quarter:** [Q1 2025]
+    Story template: templates/story_template.md
+        Defines the standard structure and sections for a user story (e.g., Story ID, Business Value, User Story, Scope, Acceptance Criteria, Gherkin Scenarios, NFRs, Dependencies & Assumptions, Compliance & Risk Notes).
+        Every user story you output must strictly follow this template’s structure.
 
----
+Input
 
-## Business Context & Goal
+You will be given a completed epic, written in Markdown, that conforms to or closely follows epic_template.md. It will include, at minimum:
 
-**Why are we doing this?**  
-[Describe the business problem, opportunity, or regulatory driver.]
+    Metadata (Epic Key, Priority, Target Quarter, Owners)
+    Business Context & Goals (Problem Statement, Business Objectives, Success Metrics, Personas)
+    Scope Definition (In Scope, Out of Scope, Assumptions)
+    Functional Requirements (High-Level Capabilities, User Workflows, Integration Points)
+    Non-Functional Requirements (Performance, Security, Compliance & Regulatory, Availability & Reliability, Scalability)
+    Dependencies & Constraints (Dependencies, Technical Constraints, Business Constraints, Risk Factors)
+    High-Level Acceptance Criteria
+    Estimated Effort & Timeline
+    AI-Assisted Refinement Notes
+    Related Epics & Stories (including an initial Estimated Story Breakdown list)
+    Appendix (Glossary, References, Change Log)
 
-**What success looks like:**  
-[Quantifiable outcomes: revenue impact, cost savings, compliance milestone, user satisfaction improvement, etc.]
+The Epic Key may be a concrete identifier (e.g., PROJ-123) or a placeholder (e.g., [TBD]).
+Your Goal
 
-**Impacted Systems/Channels:**  
-[List key systems, channels, or customer segments affected.]
+From this completed epic, you must:
 
----
+    Decompose the epic into a coherent, complete set of implementable user stories that can be developed and tested independently.
+    Use the structure in story_template.md for every story you create.
+    Return only a set of Markdown story “files” (one per story) in a single response.
 
-## High-Level Scope
+Decomposition Guidelines
 
-**In Scope:**
-- [Capability 1]
-- [Capability 2]
-- [Capability 3]
+When decomposing:
 
-**Out of Scope:**
-- [What we're explicitly NOT doing in this epic]
+    Start from the epic’s:
+        Functional Requirements
+        Estimated Story Breakdown
 
----
+    For each high-level story or capability:
+        Turn it into at least one concrete user story; or
+        Split it into multiple smaller stories where appropriate, preserving traceability.
 
-## Key Constraints & Dependencies
+    Refine and validate the story set using:
+        Scope Definition (In Scope / Out of Scope / Assumptions)
+        User Workflows (end-to-end journeys, including main and alternate flows)
+        Integration Points (systems, APIs, services, upstream/downstream)
+        Non-Functional Requirements (performance, security, compliance, availability, scalability)
+        Dependencies, Constraints, and Risk Factors
 
-**Regulatory/Compliance:**  
-[e.g., Must comply with GDPR Article X, PCI-DSS requirement Y]
+    Ensure coverage of:
+        Core “happy path” flows.
+        Material error handling and edge cases for a Tier‑1 bank (e.g., integration timeouts, partial failures, inconsistent data, invalid inputs).
+        Regulatory, compliance, and audit considerations (e.g., AML/KYC, PSD2/SCA, PCI-DSS, GDPR, SOX, Basel III, data retention, reporting, audit logging).
+        Operational aspects where relevant (e.g., logging, monitoring, alerting, dashboards, health checks, reconciliation).
 
-**Technical Constraints:**  
-[e.g., Must not increase payment latency beyond 200ms p95]
+    Maintain traceability to the epic:
+        Use the epic’s Epic Key in the Story ID and Epic Key fields.
+        Reflect relevant Business Objectives, Success Metrics, and Personas in Business Value and User Story sections.
 
-**Dependencies:**  
-- [External team/system dependency 1]
-- [External team/system dependency 2]
+If the epic’s Epic Key is missing or clearly a placeholder, use EPIC-TBD in all Story IDs.
+Using story_template.md
 
----
+For each story:
 
-## Non-Functional Requirements (Epic Level)
+    Use the exact section structure from story_template.md as the base.
 
-| NFR Category | Requirement |
-|--------------|-------------|
-| **Availability** | [e.g., 99.95% uptime] |
-| **Performance** | [e.g., API response < 500ms p95] |
-| **Security** | [e.g., All data encrypted at rest and in transit] |
-| **Compliance** | [e.g., Audit logs retained for 7 years] |
-| **Scalability** | [e.g., Support 10k TPS peak] |
+    Replace all placeholders with concrete content derived from the epic:
+        [EPIC_KEY] → actual Epic Key (e.g., PROJ-123) or EPIC-TBD.
+        [Short Story Title] → a concise, outcome-oriented title (e.g., “Real-Time Transaction Notification to Mobile App”).
+        SXX → a sequential number starting at S01 (e.g., PROJ-123-S01, PROJ-123-S02, …).
+        Business Value, Scope, Acceptance Criteria, Gherkin Scenarios, NFRs, Dependencies, Compliance & Risk Notes, etc. must be specific to that story but consistent with the epic.
 
----
+    Respect epic boundaries:
+        Do not create stories that cover anything explicitly Out of Scope.
+        Honour Technical and Business Constraints.
 
-## AI-Assisted Refinement Notes
+    Map epic-level NFRs to story-level NFRs:
+        Include and refine relevant NFRs per story (e.g., stricter latency or security requirements for a specific channel or API).
 
-**Date Refined:** [YYYY-MM-DD]  
-**Refined By:** [PO/BA Name]
+Story IDs and Filenames
 
-**Agent Prompts Used:**
-- [e.g., "Generate edge cases and NFRs for this epic"]
-- [e.g., "Identify ambiguities and suggest clarifying questions"]
+    Story IDs must follow:
+        [EPIC_KEY]-S01, [EPIC_KEY]-S02, …
+        If Epic Key is unknown or placeholder: EPIC-TBD-S01, EPIC-TBD-S02, …
 
-**Key Clarifications Needed:**
-- [ ] [Question 1 for stakeholders]
-- [ ] [Question 2 for stakeholders]
+    At the very top of each story, include an HTML comment for the intended filename in kebab-case, based on Story ID and title, for example:
 
----
+    <!-- filename: PROJ-123-S01-real-time-transaction-notification.md -->
+    # Real-Time Transaction Notification
 
-## Links & Attachments
+    This filename comment must follow this pattern:
 
-- **Confluence Spec:** [Link]
-- **Architecture Design (GitLab):** [Link to ADR or design doc]
-- **Related Epics/Stories:** [PROJ-YYY, PROJ-ZZZ]
+    <!-- filename: [EPIC_KEY]-SXX-kebab-case-title.md -->
 
----
+Output Format Requirements
 
-## Acceptance Criteria (Epic Level)
+    Output only the fully instantiated stories in Markdown.
 
-- [ ] All child stories delivered and accepted.
-- [ ] End-to-end testing completed with evidence.
-- [ ] Security and compliance sign-off obtained.
-- [ ] Documentation (user guides, runbooks) published.
-- [ ] Deployed to production via ArgoCD with rollback plan validated.
----
+    Do not:
+        Output the epic itself.
+        Output epic_template.md or story_template.md.
+        Add explanation, commentary, or instructions outside the stories.
 
-Based on the following raw business input, fill out this entire Epic template with concrete, realistic content, replacing all bracketed placeholders. Do NOT change the structure or headings of the template.
+    The final response must be a sequence of story documents, one after another, each:
+        With the filename comment at the top.
+        Structured exactly according to story_template.md.
+        With all placeholders replaced by concrete content.
 
-RAW BUSINESS INPUT:
-- Business goal: [describe the high-level goal, e.g., "enable customers to view real-time transaction notifications in the mobile app"]
-- Key drivers: [list drivers, e.g., "improve customer engagement", "reduce call center volume", "meet regulatory requirement XYZ"]
-- Impacted areas: [e.g., "mobile banking app", "notifications service", "core payments system"]
-- Known constraints: [e.g., "no impact on payment latency", "must support 24x7 availability"]
-- Regulatory context: [e.g., "must comply with PSD2, GDPR, internal logging policy ABC"]
-- Target timeframe: [e.g., "Q3 2025"]
-- Business owner: [Name/Role]
-- Technical lead: [Name/Role]
-- Any initial ideas or scope notes: [bullet list]
+You may include a blank line between stories for readability.
+Quality & Domain Expectations
 
-Please:
+    Banking-specific precision
 
-1. Use precise banking/financial language where appropriate.
-2. Propose a sensible “In Scope” and “Out of Scope” list based on the input.
-3. Suggest realistic NFRs that match a Tier-1 banking environment.
-4. Propose 3–5 “Key Clarifications Needed” as checkboxes.
-5. Leave **Epic Key** blank or as a placeholder like `[TBD by Jira]`.
+    Use correct Tier‑1 banking language aligned with the epic’s domain (e.g., retail banking, corporate banking, payments, lending, treasury). Where applicable, use terms such as:
+        Authorization, authentication, SCA
+        Clearing, settlement, cut-off times
+        Payment initiation, standing instructions
+        AML/KYC checks, sanctions screening
+        PCI-DSS scope, GDPR data subject rights, data residency
 
-ask me for any clarifications and uncertain
+    Testability and completeness
 
-Return ONLY the completed Jira Epic in markdown, ready to paste into Jira/Confluence.
+    For each story:
+        Acceptance Criteria must be clear, specific, and testable.
+        Include both positive and negative paths.
+        Include relevant error conditions (e.g., invalid/edge inputs, system unavailability, timeouts, partial failures, missing or inconsistent data, permission failures).
+        Where relevant, ensure criteria and scenarios cover:
+            Permissions and authorization rules.
+            Validation rules and user-facing error messages.
+            Logging, audit trails, and traceability requirements.
+
+    Regulatory & compliance awareness
+
+    Where the epic mentions regulations or policies (e.g., PCI-DSS, GDPR, SOX, Basel III, AML/KYC, internal risk standards):
+        Create one or more stories that explicitly address:
+            Required controls and approvals.
+            Data retention and archival requirements.
+            Reporting, reconciliation, and auditability.
+
+    Consistency with the epic
+        Do not contradict any explicit scope, constraint, or requirement.
+        Where assumptions are required, keep them realistic for a Tier‑1 bank and document them in the Dependencies & Assumptions and/or Compliance & Risk Notes sections of the relevant stories.
+
+Handling Missing or Ambiguous Information
+
+If critical information is missing but reasonable assumptions can be made:
+
+    Make assumptions consistent with a Tier‑1 regulated banking environment.
+    Clearly document them in Dependencies & Assumptions and/or Compliance & Risk Notes for each affected story.
+
+If ambiguity or conflict is so significant that it could materially change design, risk posture, or compliance:
+
+    Add a dedicated story titled “Analysis & Clarification” (or similar), whose purpose is to capture workshops, investigations, or POCs needed before implementation.
+
+    Within that story, include:
+
+
+    ## Open Questions for Stakeholders
+
+    1. [Question 1]
+    2. [Question 2]
+    3. [Question 3]
+
+
+Do not place open questions outside a story. All questions must reside within a specific story document.
+Final Instruction
+
+Produce only the set of instantiated user story Markdown documents, based on story_template.md and fully derived from the given completed epic.
+
+Do not include:
+
+    Any meta-explanation of your process.
+    Any template content.
+    Any content from the epic itself.
+
+Only return the final user stories, ready to be saved as individual .md files
